@@ -7,9 +7,9 @@ TimerApp is a simple yet powerful timer application built using React Native and
 - Start, pause, and reset timers
 - Multiple timer support
 - Customizable Mile Stones
-- Dar/Light Theme
--Timer History
--Group Actions
+- Dark/Light Theme
+- Timer History
+- Group Actions
 - User-friendly UI with smooth animations
 - Built using Expo pre-release (preview) version
 
