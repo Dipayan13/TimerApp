@@ -24,7 +24,6 @@ TimerApp is a simple yet powerful timer application built using React Native and
 
 1. Clone the repository:
    ```sh
-   git clone https://github.com/yourusername/TimerApp.git
    cd TimerApp
    ```
 
@@ -40,7 +39,7 @@ TimerApp is a simple yet powerful timer application built using React Native and
 
 ## Download
 You can download TimerApp from the following link:
-[Download TimerApp](#) [*[(Replace with actual download link)](https://expo.dev/accounts/dipayanb/projects/TimerApp/builds/384f1a15-2a67-48d3-95ff-2b7bcb720054 )*](https://expo.dev/accounts/dipayanb/projects/TimerApp/builds/384f1a15-2a67-48d3-95ff-2b7bcb720054 )
+[Download TimerApp](#) https://expo.dev/accounts/dipayanb/projects/TimerApp/builds/384f1a15-2a67-48d3-95ff-2b7bcb720054 
 
 ## License
 This project is licensed under the MIT License.
