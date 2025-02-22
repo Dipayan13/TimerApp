@@ -1,39 +1,67 @@
-import { DarkTheme, DefaultTheme, ThemeProvider } from '@react-navigation/native';
-import { useFonts } from 'expo-font';
-import { Stack } from 'expo-router';
-import * as SplashScreen from 'expo-splash-screen';
-import { StatusBar } from 'expo-status-bar';
-import { useEffect } from 'react';
-import 'react-native-reanimated';
 
-import { useColorScheme } from '@/hooks/useColorScheme';
+import { createContext, useContext, useState } from "react";
+import { Stack } from "expo-router";
+import { ThemeProvider } from "@/utils/themeContext"; // Import ThemeProvider
 
-// Prevent the splash screen from auto-hiding before asset loading is complete.
-SplashScreen.preventAutoHideAsync();
+
+// Define timer structure
+interface Timer {
+  id: string;
+  name: string;
+  duration: number;
+  remainingTime: number;
+  isRunning: boolean;
+  category: string;
+}
+
+// Define context structure
+interface TimerContextType {
+  timers: { [key: string]: Timer };
+  startTimer: (id: string, name: string, duration: number, category: string) => void;
+  updateTimer: (id: string, remainingTime: number, isRunning: boolean) => void;
+}
+
+// Create Context
+const TimerContext = createContext<TimerContextType | undefined>(undefined);
+
+export function useTimerContext() {
+  const context = useContext(TimerContext);
+  if (!context) throw new Error("useTimerContext must be used within TimerProvider");
+  return context;
+}
 
 export default function RootLayout() {
-  const colorScheme = useColorScheme();
-  const [loaded] = useFonts({
-    SpaceMono: require('../assets/fonts/SpaceMono-Regular.ttf'),
-  });
+  const [timers, setTimers] = useState<{ [key: string]: Timer }>({});
 
-  useEffect(() => {
-    if (loaded) {
-      SplashScreen.hideAsync();
-    }
-  }, [loaded]);
+  // Start a timer
+  const startTimer = (id: string, name: string, duration: number, category: string) => {
+    setTimers((prev) => ({
+      ...prev,
+      [id]: prev[id] 
+        ? { ...prev[id], isRunning: true } 
+        : { id, name, duration, remainingTime: duration, isRunning: true, category },
+    }));
+  };
+  
+  
 
-  if (!loaded) {
-    return null;
-  }
+  // Update timer state
+  const updateTimer = (id: string, remainingTime: number, isRunning: boolean) => {
+    setTimers((prev) => ({
+      ...prev,
+      [id]: { ...prev[id], remainingTime, isRunning },
+    }));
+  };
 
   return (
-    <ThemeProvider value={colorScheme === 'dark' ? DarkTheme : DefaultTheme}>
-      <Stack>
-        <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
-        <Stack.Screen name="+not-found" />
-      </Stack>
-      <StatusBar style="auto" />
+    <ThemeProvider>
+      <TimerContext.Provider value={{ timers, startTimer, updateTimer }}>
+        <Stack>
+          <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
+          <Stack.Screen name="addTimer" options={{ title: "Add Timer" }} />
+          <Stack.Screen name="timerScreen" options={{ title: "Timer" }} />
+        </Stack>
+      </TimerContext.Provider>
     </ThemeProvider>
   );
 }

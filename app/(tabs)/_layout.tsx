@@ -1,45 +1,61 @@
-import { Tabs } from 'expo-router';
-import React from 'react';
-import { Platform } from 'react-native';
+import { Tabs } from "expo-router";
+import { useTheme } from "@/utils/themeContext"; 
+import { View, StyleSheet } from "react-native";
+import { Ionicons } from "@expo/vector-icons"; // Import icons
 
-import { HapticTab } from '@/components/HapticTab';
-import { IconSymbol } from '@/components/ui/IconSymbol';
-import TabBarBackground from '@/components/ui/TabBarBackground';
-import { Colors } from '@/constants/Colors';
-import { useColorScheme } from '@/hooks/useColorScheme';
-
-export default function TabLayout() {
-  const colorScheme = useColorScheme();
+export default function TabsLayout() {
+  const { isDarkMode } = useTheme();
 
   return (
-    <Tabs
-      screenOptions={{
-        tabBarActiveTintColor: Colors[colorScheme ?? 'light'].tint,
-        headerShown: false,
-        tabBarButton: HapticTab,
-        tabBarBackground: TabBarBackground,
-        tabBarStyle: Platform.select({
-          ios: {
-            // Use a transparent background on iOS to show the blur effect
-            position: 'absolute',
+    <View style={[styles.container, isDarkMode && styles.darkContainer]}>
+      <Tabs
+        screenOptions={({ route }) => ({
+          tabBarIcon: ({ focused, color, size }) => {
+            let iconName: keyof typeof Ionicons.glyphMap; 
+
+            if (route.name === "index") {
+              iconName = focused ? "timer" : "timer-outline";
+            } else if (route.name === "history") {
+              iconName = focused ? "time" : "time-outline";
+            } else if (route.name === "addTimer") {
+              iconName = focused ? "add-circle" : "add-circle-outline";
+            } else if (route.name === "explore") {
+              iconName = focused ? "compass" : "compass-outline";
+            } else {
+              iconName = "help-circle"; // Default icon (prevents undefined)
+            }
+
+            return <Ionicons name={iconName} size={size} color={color} />;
           },
-          default: {},
-        }),
-      }}>
-      <Tabs.Screen
-        name="index"
-        options={{
-          title: 'Home',
-          tabBarIcon: ({ color }) => <IconSymbol size={28} name="house.fill" color={color} />,
-        }}
-      />
-      <Tabs.Screen
-        name="explore"
-        options={{
-          title: 'Explore',
-          tabBarIcon: ({ color }) => <IconSymbol size={28} name="paperplane.fill" color={color} />,
-        }}
-      />
-    </Tabs>
+          tabBarActiveTintColor: isDarkMode ? "#ffffff" : "#007AFF",
+          tabBarInactiveTintColor: isDarkMode ? "#BBBBBB" : "#888888",
+          tabBarStyle: {
+            backgroundColor: isDarkMode ? "#121212" : "#ffffff",
+          },
+        })}
+      >
+        <Tabs.Screen 
+          name="index" 
+          options={{ title: "Timers", headerTitleAlign: "center" }} 
+        />
+        <Tabs.Screen 
+          name="history" 
+          options={{ title: "History", headerTitleAlign: "center" }} 
+        />
+        <Tabs.Screen 
+          name="addTimer" 
+          options={{ title: "Add Timer", headerTitleAlign: "center" }} 
+        />
+        <Tabs.Screen 
+          name="explore" 
+          options={{ title: "Explore", headerTitleAlign: "center" }} 
+        />
+      </Tabs>
+    </View>
   );
 }
+
+const styles = StyleSheet.create({
+  container: { flex: 1, backgroundColor: "#ffffff" },
+  darkContainer: { backgroundColor: "#121212" },
+});

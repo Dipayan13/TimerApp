@@ -1,74 +1,182 @@
-import { Image, StyleSheet, Platform } from 'react-native';
 
-import { HelloWave } from '@/components/HelloWave';
-import ParallaxScrollView from '@/components/ParallaxScrollView';
-import { ThemedText } from '@/components/ThemedText';
-import { ThemedView } from '@/components/ThemedView';
+
+
+//Dark theme
+
+import { View, Button, FlatList, Text, TouchableOpacity, StyleSheet, Image, Switch } from "react-native";
+import { useState, useEffect, useCallback, useLayoutEffect } from "react";
+import { useRouter, useNavigation } from "expo-router";
+import { useFocusEffect } from "@react-navigation/native";
+import { getTimers, Timer } from "../../utils/storage";
+import TimerCard from "@/components/TimeCard";
+import { useTheme } from "@/utils/themeContext"; // Import theme context
 
 export default function HomeScreen() {
+  const { isDarkMode, toggleDarkMode } = useTheme(); // Use dark mode state
+  const [timers, setTimers] = useState<Timer[]>([]);
+  const [expandedCategories, setExpandedCategories] = useState<{ [key: string]: boolean }>({});
+  const [playPauseState, setPlayPauseState] = useState<{ [key: string]: boolean }>({});
+  const router = useRouter();
+  const navigation = useNavigation(); // Get navigation instance
+
+  useFocusEffect(
+    useCallback(() => {
+      loadTimers();
+    }, [])
+  );
+
+  useEffect(() => {
+    loadTimers();
+  }, []);
+
+  useLayoutEffect(() => {
+    navigation.setOptions({
+      title: "Timers",
+      headerTitleAlign: "center",
+      headerRight: () => (
+        <Switch value={isDarkMode} onValueChange={toggleDarkMode} />
+      ),
+    });
+  }, [navigation, isDarkMode]);
+
+  const loadTimers = async () => {
+    const storedTimers = await getTimers();
+    setTimers(storedTimers || []);
+  };
+
+  const groupedTimers = timers.reduce((acc, timer) => {
+    if (!acc[timer.category]) acc[timer.category] = [];
+    acc[timer.category].push(timer);
+    return acc;
+  }, {} as { [key: string]: Timer[] });
+
+  const toggleCategory = (category: string) => {
+    setExpandedCategories((prev) => ({
+      ...prev,
+      [category]: !prev[category],
+    }));
+  };
+
+  const togglePlayPauseAll = async (category: string) => {
+    const isPlaying = !playPauseState[category];
+    setPlayPauseState((prev) => ({ ...prev, [category]: isPlaying }));
+    const updatedTimers = timers.map((timer) =>
+      timer.category === category ? { ...timer, isRunning: isPlaying } : timer
+    );
+    setTimers(updatedTimers);
+  };
+
+  const resetAllTimers = async (category: string) => {
+    const updatedTimers = timers.map((timer) =>
+      timer.category === category ? { ...timer, elapsedTime: 0, isRunning: false } : timer
+    );
+    setTimers(updatedTimers);
+    setPlayPauseState((prev) => ({ ...prev, [category]: false }));
+  };
+
   return (
-    <ParallaxScrollView
-      headerBackgroundColor={{ light: '#A1CEDC', dark: '#1D3D47' }}
-      headerImage={
-        <Image
-          source={require('@/assets/images/partial-react-logo.png')}
-          style={styles.reactLogo}
+    <View style={[styles.container, isDarkMode && styles.darkContainer]}>
+      <Button title="Add New Timer" onPress={() => router.push("/(tabs)/addTimer")} />
+      {Object.keys(groupedTimers).length === 0 ? (
+        <Text>No timers found. Add one!</Text>
+      ) : (
+        <FlatList
+          data={Object.keys(groupedTimers)}
+          keyExtractor={(category) => category}
+          renderItem={({ item: category }) => (
+            <View style={styles.categoryContainer}>
+              <View style={styles.categoryHeader}>
+                <TouchableOpacity onPress={() => toggleCategory(category)}>
+                  <Text style={[styles.categoryText, isDarkMode && styles.darkText]}>
+                    {expandedCategories[category] ? "▼" : "▶"} {category}
+                  </Text>
+                </TouchableOpacity>
+
+                <View style={styles.buttonContainer}>
+                  <TouchableOpacity
+                    style={styles.playPauseButton}
+                    onPress={() => togglePlayPauseAll(category)}
+                  >
+                    <Image
+                      source={playPauseState[category] ? require('@/assets/images/pause.webp') : require('@/assets/images/play.webp')}
+                      style={styles.icon}
+                    />
+                    <Text style={[styles.buttonText, isDarkMode && styles.darkText]}>
+                      {playPauseState[category] ? "Pause All" : "Play All"}
+                    </Text>
+                  </TouchableOpacity>
+
+                  <TouchableOpacity
+                    style={styles.resetButton}
+                    onPress={() => resetAllTimers(category)}
+                  >
+                    <Image
+                      source={require('@/assets/images/undo.webp')}
+                      style={styles.icon}
+                    />
+                    <Text style={[styles.buttonText, isDarkMode && styles.darkText]}>Reset All</Text>
+                  </TouchableOpacity>
+                </View>
+              </View>
+
+              {expandedCategories[category] &&
+                groupedTimers[category].map((timer) => (
+                  <TimerCard key={timer.id} timer={timer} />
+                ))}
+            </View>
+          )}
         />
-      }>
-      <ThemedView style={styles.titleContainer}>
-        <ThemedText type="title">Welcome!</ThemedText>
-        <HelloWave />
-      </ThemedView>
-      <ThemedView style={styles.stepContainer}>
-        <ThemedText type="subtitle">Step 1: Try it</ThemedText>
-        <ThemedText>
-          Edit <ThemedText type="defaultSemiBold">app/(tabs)/index.tsx</ThemedText> to see changes.
-          Press{' '}
-          <ThemedText type="defaultSemiBold">
-            {Platform.select({
-              ios: 'cmd + d',
-              android: 'cmd + m',
-              web: 'F12'
-            })}
-          </ThemedText>{' '}
-          to open developer tools.
-        </ThemedText>
-      </ThemedView>
-      <ThemedView style={styles.stepContainer}>
-        <ThemedText type="subtitle">Step 2: Explore</ThemedText>
-        <ThemedText>
-          Tap the Explore tab to learn more about what's included in this starter app.
-        </ThemedText>
-      </ThemedView>
-      <ThemedView style={styles.stepContainer}>
-        <ThemedText type="subtitle">Step 3: Get a fresh start</ThemedText>
-        <ThemedText>
-          When you're ready, run{' '}
-          <ThemedText type="defaultSemiBold">npm run reset-project</ThemedText> to get a fresh{' '}
-          <ThemedText type="defaultSemiBold">app</ThemedText> directory. This will move the current{' '}
-          <ThemedText type="defaultSemiBold">app</ThemedText> to{' '}
-          <ThemedText type="defaultSemiBold">app-example</ThemedText>.
-        </ThemedText>
-      </ThemedView>
-    </ParallaxScrollView>
+      )}
+    </View>
   );
 }
 
 const styles = StyleSheet.create({
-  titleContainer: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: 8,
+  container: { flex: 1, backgroundColor: "#ffffff" },
+  darkContainer: { backgroundColor: "#121212" },
+  categoryContainer: {
+    marginBottom: 15,
   },
-  stepContainer: {
-    gap: 8,
-    marginBottom: 8,
+  categoryHeader: {
+    flexDirection: "row",
+    justifyContent: "space-between",
+    alignItems: "center",
+    padding: 10,
   },
-  reactLogo: {
-    height: 178,
-    width: 290,
-    bottom: 0,
-    left: 0,
-    position: 'absolute',
+  categoryText: {
+    fontSize: 20,
+    fontWeight: "bold",
+  },
+  darkText: {
+    color: "#ffffff",
+  },
+  buttonContainer: {
+    flexDirection: "row",
+    justifyContent: "flex-end",
+    alignItems: "center",
+  },
+  playPauseButton: {
+    flexDirection: "row",
+    alignItems: "center",
+    backgroundColor: "#d9d9d9",
+    padding: 8,
+    borderRadius: 20,
+    marginRight: 15,
+  },
+  resetButton: {
+    flexDirection: "row",
+    alignItems: "center",
+    backgroundColor: "#d9d9d9",
+    padding: 8,
+    borderRadius: 20,
+  },
+  icon: {
+    width: 20,
+    height: 20,
+    marginRight: 5,
+  },
+  buttonText: {
+    fontSize: 16,
   },
 });
+

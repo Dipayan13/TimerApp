@@ -15,81 +15,73 @@ export default function TabTwoScreen() {
         <IconSymbol
           size={310}
           color="#808080"
-          name="chevron.left.forwardslash.chevron.right"
+          name="clock"
           style={styles.headerImage}
         />
       }>
       <ThemedView style={styles.titleContainer}>
-        <ThemedText type="title">Explore</ThemedText>
+        <ThemedText type="title">Explore Timer Features</ThemedText>
       </ThemedView>
-      <ThemedText>This app includes example code to help you get started.</ThemedText>
-      <Collapsible title="File-based routing">
+      <ThemedText>Welcome to the Timer App! Here are some of the app's powerful features:</ThemedText>
+
+      <Collapsible title="Multiple Timers">
         <ThemedText>
-          This app has two screens:{' '}
-          <ThemedText type="defaultSemiBold">app/(tabs)/index.tsx</ThemedText> and{' '}
-          <ThemedText type="defaultSemiBold">app/(tabs)/explore.tsx</ThemedText>
+          You can set up multiple timers at once, organize them into categories, and run them simultaneously. Whether it's for work, fitness, or study sessions, this app has you covered.
         </ThemedText>
+      </Collapsible>
+
+      <Collapsible title="Progress Tracking">
         <ThemedText>
-          The layout file in <ThemedText type="defaultSemiBold">app/(tabs)/_layout.tsx</ThemedText>{' '}
-          sets up the tab navigator.
+          Track the progress of your timers with visual indicators. See how much time has passed and how much time is left for each timer with real-time updates.
         </ThemedText>
-        <ExternalLink href="https://docs.expo.dev/router/introduction">
+      </Collapsible>
+
+      <Collapsible title="Timer History">
+        <ThemedText>
+          Keep track of your past timer sessions. You can view the history of completed timers and analyze your productivity or progress.
+        </ThemedText>
+      </Collapsible>
+
+      <Collapsible title="Categories & Bulk Actions">
+        <ThemedText>
+          Organize your timers into categories for better management. You can also perform bulk actions like starting, pausing, or resetting multiple timers at once.
+        </ThemedText>
+      </Collapsible>
+
+      <Collapsible title="Local Data Persistence">
+        <ThemedText>
+          Your timers, settings, and history are saved locally using AsyncStorage. This means you can use the app offline, and your data will persist even when you restart the app.
+        </ThemedText>
+      </Collapsible>
+
+      <Collapsible title="Dark Mode & Light Mode Support">
+        <ThemedText>
+          The app supports both dark and light modes. The color scheme will automatically adjust based on your device settings for a more comfortable experience.
+        </ThemedText>
+        <ExternalLink href="https://reactnative.dev/docs/theming">
           <ThemedText type="link">Learn more</ThemedText>
         </ExternalLink>
       </Collapsible>
-      <Collapsible title="Android, iOS, and web support">
+
+      <Collapsible title="Customization Options">
         <ThemedText>
-          You can open this project on Android, iOS, and the web. To open the web version, press{' '}
-          <ThemedText type="defaultSemiBold">w</ThemedText> in the terminal running this project.
+          Customize the appearance of your timers, set personalized alarms, and even choose from various timer sounds to suit your preferences.
         </ThemedText>
       </Collapsible>
-      <Collapsible title="Images">
-        <ThemedText>
-          For static images, you can use the <ThemedText type="defaultSemiBold">@2x</ThemedText> and{' '}
-          <ThemedText type="defaultSemiBold">@3x</ThemedText> suffixes to provide files for
-          different screen densities
-        </ThemedText>
-        <Image source={require('@/assets/images/react-logo.png')} style={{ alignSelf: 'center' }} />
-        <ExternalLink href="https://reactnative.dev/docs/images">
-          <ThemedText type="link">Learn more</ThemedText>
-        </ExternalLink>
-      </Collapsible>
-      <Collapsible title="Custom fonts">
-        <ThemedText>
-          Open <ThemedText type="defaultSemiBold">app/_layout.tsx</ThemedText> to see how to load{' '}
-          <ThemedText style={{ fontFamily: 'SpaceMono' }}>
-            custom fonts such as this one.
-          </ThemedText>
-        </ThemedText>
-        <ExternalLink href="https://docs.expo.dev/versions/latest/sdk/font">
-          <ThemedText type="link">Learn more</ThemedText>
-        </ExternalLink>
-      </Collapsible>
-      <Collapsible title="Light and dark mode components">
-        <ThemedText>
-          This template has light and dark mode support. The{' '}
-          <ThemedText type="defaultSemiBold">useColorScheme()</ThemedText> hook lets you inspect
-          what the user's current color scheme is, and so you can adjust UI colors accordingly.
-        </ThemedText>
-        <ExternalLink href="https://docs.expo.dev/develop/user-interface/color-themes/">
-          <ThemedText type="link">Learn more</ThemedText>
-        </ExternalLink>
-      </Collapsible>
+
       <Collapsible title="Animations">
         <ThemedText>
-          This template includes an example of an animated component. The{' '}
-          <ThemedText type="defaultSemiBold">components/HelloWave.tsx</ThemedText> component uses
-          the powerful <ThemedText type="defaultSemiBold">react-native-reanimated</ThemedText>{' '}
-          library to create a waving hand animation.
+          The app includes smooth animations when starting, pausing, or resetting timers, giving you a more interactive and engaging experience.
         </ThemedText>
-        {Platform.select({
-          ios: (
-            <ThemedText>
-              The <ThemedText type="defaultSemiBold">components/ParallaxScrollView.tsx</ThemedText>{' '}
-              component provides a parallax effect for the header image.
-            </ThemedText>
-          ),
-        })}
+      </Collapsible>
+
+      <Collapsible title="App Documentation">
+        <ThemedText>
+          For a deeper dive into the app's features and functionality, check out the documentation. It includes detailed explanations and guides to help you make the most of the Timer App.
+        </ThemedText>
+        <ExternalLink href="https://github.com/Dipayan13">
+          <ThemedText type="link">Learn more</ThemedText>
+        </ExternalLink>
       </Collapsible>
     </ParallaxScrollView>
   );
